@@ -49,6 +49,7 @@ def read_excel_file(file_name, sheet_index=0):
     """
     data = []
     rd = xlrd.open_workbook(file_name)
+    # sheets = len(rd.sheets()) # кол-во листочков в книге
     sheet = rd.sheet_by_index(sheet_index)
     rownum: int
     for rownum in range(sheet.nrows):

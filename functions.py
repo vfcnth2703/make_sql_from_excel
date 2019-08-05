@@ -3,6 +3,8 @@ import os
 import xlrd
 
 
+
+
 def write_sql(header, body, file_name):
     """
         Пишем результирующий файл sql
@@ -10,7 +12,8 @@ def write_sql(header, body, file_name):
     with open(file_name, 'w') as f:
         f.write(f'WITH R ([ID], {header})\n AS (\n')
         for id, item in enumerate(body, start=1):
-            line = '\', \''.join(map(convert_num, item)).replace(u'\u200b','')
+            # line = '\', \''.join(map(convert_num, item)).replace(u'\u200b','')
+            line = '\', \''.join(map(convert_num_to_int, item)).replace(u'\u200b','')
             # replace(u'\u200b','') нужно для удаления нулевых пробелов.
             f.write(f'{add_space(4)}select {id},\'{line}\'\n')
             if item != body[-1]:
@@ -93,6 +96,26 @@ def convert_num(arg):
     """
     if is_digit(str(arg)):
         return str(float(arg))
+    else:
+        return str(arg)
+
+
+def convert_num_to_int(arg):
+    """
+        Конвертируем все значения с плавающей точкой целому числу и к строке
+    """
+    if is_digit(str(arg)):
+        if '.' in str(arg):
+            return remove_decimal_sep(arg, '.')
+        if ',' in str(arg):
+            return remove_decimal_sep(arg, ',')
+    else:
+        return str(arg)
+
+
+def remove_decimal_sep(arg, sep):
+    if int(str(arg).split(sep=sep)[1]) == 0:
+        return str(arg).split(sep=sep)[0]
     else:
         return str(arg)
 

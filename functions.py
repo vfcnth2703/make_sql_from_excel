@@ -13,7 +13,7 @@ def write_sql(header, body, file_name):
         f.write(f'WITH R ([ID], {header})\n AS (\n')
         for id, item in enumerate(body, start=1):
             # line = '\', \''.join(map(convert_num, item)).replace(u'\u200b','')
-            line = '\', \''.join(map(convert_num_to_int, item)).replace(u'\u200b','')
+            line = '\', \''.join(map(convert_num_to_int, item)).replace(u'\u200b','').replace('*','').replace('/','').replace('\\','').rstrip()
             # replace(u'\u200b','') нужно для удаления нулевых пробелов.
             f.write(f'{add_space(4)}select {id},\'{line}\'\n')
             if item != body[-1]:
@@ -106,11 +106,16 @@ def convert_num_to_int(arg):
     """
     if is_digit(str(arg)):
         if '.' in str(arg):
-            return remove_decimal_sep(arg, '.')
-        if ',' in str(arg):
-            return remove_decimal_sep(arg, ',')
+            result = remove_decimal_sep(arg, '.')
+        else:
+            str(arg)
+        if "," in str(arg):
+            result = remove_decimal_sep(arg, ',')
+        else:
+            result = str(arg)
     else:
-        return str(arg)
+        result = str(arg)
+    return result
 
 
 def remove_decimal_sep(arg, sep):
